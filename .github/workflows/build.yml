@@ -1,0 +1,53 @@
+org.gradle.jvmargs=-Xmx1G
+minecraft_version=1.21.4
+yarn_mappings=1.21.4+build.8
+loader_version=0.16.10
+fabric_version=0.119.2+1.21.4
+mod_version=1.0.0
+
+COMO GENERAR EL JAR
+1) Instala JDK 21.
+2) Instala Gradle 8.12+ (o usa el gradlew de cualquier plantilla de Fabric).
+3) En esta carpeta ejecuta:
+      gradle wrapper      (solo la primera vez, si no tienes gradlew)
+      ./gradlew build     (en Windows: gradlew.bat build)
+4) El jar queda en build/libs/triggerbot-1.0.0.jar
+5) Copialo a .minecraft/mods junto con Fabric API 0.119.2+1.21.4.
+
+Ctrl derecho = activar/desactivar. Shift derecho = menu de configuracion. Solo singleplayer / LAN.
+
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id 'fabric-loom' version '1.9-SNAPSHOT'
+}
+
+version = project.mod_version
+group = 'com.example'
+
+base { archivesName = 'triggerbot' }
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") { expand "version": project.version }
+}
+
+tasks.withType(JavaCompile).configureEach { it.options.release = 21 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
